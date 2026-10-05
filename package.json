@@ -1,0 +1,26 @@
+{
+  "name": "apparelflow-erp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ApparelFlow ERP — Production Batch Verification & Sewing Queue Gate",
+  "workspaces": [
+    "packages/*",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @apparelflow/shared",
+    "dev:server": "npm run dev -w @apparelflow/server",
+    "dev:client": "npm run dev -w @apparelflow/client",
+    "build:server": "npm run build -w @apparelflow/server",
+    "build:client": "npm run build -w @apparelflow/client",
+    "build": "npm run build:shared && npm run build:server && npm run build:client",
+    "test": "npm run test -w @apparelflow/server",
+    "db:migrate": "npm run db:migrate -w @apparelflow/server",
+    "db:seed": "npm run db:seed -w @apparelflow/server",
+    "db:studio": "npm run db:studio -w @apparelflow/server"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
