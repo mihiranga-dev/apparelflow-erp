@@ -41,6 +41,16 @@ cutting batches from reaching the sewing floor.
 - **ORM:** Drizzle
 - **Auth:** JWT with bcrypt-hashed credentials + role switcher
 
+## Demo Credentials
+
+```
+Role	                      Email	                 Password
+
+Cutting Supervisor	supervisor@apparelflow.dev	 Password123!
+Cutting Verifier	  verifier@apparelflow.dev	 Password123!
+Sewing Supervisor	  sewing@apparelflow.dev	 Password123!
+```
+
 ## Documentation
 
 - [`AI_OPTIMIZATION_REPORT.md`](./AI_OPTIMIZATION_REPORT.md) — AI usage audit

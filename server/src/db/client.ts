@@ -5,6 +5,9 @@ import * as schema from "./schema";
 
 // `prepare: false` keeps compatible with Supabase's connection pooler,
 // which does not support prepared statements in transaction mode.
-const queryClient = postgres(env.DATABASE_URL, { prepare: false });
+const queryClient = postgres(env.DATABASE_URL, {
+  prepare: false,
+  max: 5,
+});
 
 export const db = drizzle(queryClient, { schema });
