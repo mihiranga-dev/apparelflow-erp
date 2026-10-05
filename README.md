@@ -6,30 +6,32 @@ cutting batches from reaching the sewing floor.
 
 ## Core Business Problem
 
+```
 ┌─────────────────────────────────────────────────────────────────┐
-│ GARMENT FACTORY FLOOR │
-│ │
-│ FABRIC ROLLS │
-│ (Raw Material) │
-│ │ │
-│ ▼ │
-│ ┌──────────────┐ ┌──────────────────┐ ┌────────────┐ │
-│ │ CUTTING │────▶│ VERIFICATION │────▶│ SEWING │ │
-│ │ DEPARTMENT │ │ GATE │ │ FLOOR │ │
-│ │ │ │ │ │ │ │
-│ │ Supervisor │ │ Verifier counts │ │ Supervisor │ │
-│ │ creates │ │ each component │ │ receives │ │
-│ │ batches │ │ against recipe │ │ verified │ │
-│ │ │ │ │ │ batches │ │
-│ └──────────────┘ └────────┬─────────┘ └────────────┘ │
-│ │ │
-│ THE HARD STOP │
-│ ┌────────────▼────────────┐ │
-│ │ ANY RED COMPONENT? │ │
-│ │ → BLOCK SEWING QUEUE │ │
-│ │ → FORCE REJECTION │ │
-│ └─────────────────────────┘ │
+│                    GARMENT FACTORY FLOOR                        │
+│                                                                 │
+│   FABRIC ROLLS                                                  │
+│   (Raw Material)                                                │
+│        │                                                        │
+│        ▼                                                        │
+│   ┌──────────────┐     ┌──────────────────┐     ┌────────────┐  │
+│   │   CUTTING    │────▶│   VERIFICATION   │────▶│   SEWING  │  │
+│   │  DEPARTMENT  │     │       GATE       │     │   FLOOR    │  │
+│   │              │     │                  │     │            │  │
+│   │ Supervisor   │     │ Verifier counts  │     │ Supervisor │  │
+│   │ creates      │     │ each component   │     │ receives   │  │
+│   │ batches      │     │ against recipe   │     │ verified   │  │
+│   │              │     │                  │     │ batches    │  │
+│   └──────────────┘     └────────┬─────────┘     └────────────┘  │
+│                                 │                               │
+│                          THE HARD STOP                          │
+│                    ┌────────────▼────────────┐                  │
+│                    │  ANY RED COMPONENT?     │                  │
+│                    │  → BLOCK SEWING QUEUE   │                  │
+│                    │  → FORCE REJECTION      │                  │
+│                    └─────────────────────────┘                  │
 └─────────────────────────────────────────────────────────────────┘
+```
 
 ## Architecture
 

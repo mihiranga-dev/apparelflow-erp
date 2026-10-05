@@ -1,12 +1,12 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      // shadcn/ui components import via "@/..." — wire that to /src.
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
