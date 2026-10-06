@@ -1,6 +1,7 @@
 import { useAuth } from "@/lib/auth-context";
 import { LoginPage } from "@/pages/LoginPage";
 import { AppShell } from "@/components/AppShell";
+import { SupervisorDashboard } from "@/pages/SupervisorDashboard";
 import {
   Card,
   CardContent,
@@ -8,7 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ROLE_LABELS } from "@apparelflow/shared";
+
+function Placeholder({ title, body }: { title: string; body: string }) {
+  return (
+    <Card className="max-w-2xl">
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>Coming in a later phase.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{body}</p>
+      </CardContent>
+    </Card>
+  );
+}
 
 function App() {
   const { user, status } = useAuth();
@@ -27,26 +41,19 @@ function App() {
 
   return (
     <AppShell>
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <CardTitle>Phase 2 — Authentication verified</CardTitle>
-          <CardDescription>
-            The role switcher in the header issues a fresh JWT for the chosen
-            persona.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          <p>
-            <strong>Role:</strong> {ROLE_LABELS[user.role]} ({user.role})
-          </p>
-          <p>
-            <strong>User ID:</strong> {user.id}
-          </p>
-          <p className="text-muted-foreground">
-            Role-specific dashboards arrive in Phases 3, 4, and 5.
-          </p>
-        </CardContent>
-      </Card>
+      {user.role === "cutting_supervisor" && <SupervisorDashboard />}
+      {user.role === "cutting_verifier" && (
+        <Placeholder
+          title="Cutting Verifier Workspace"
+          body="The traffic-light verification terminal and hard-stop gate arrive in Phase 4."
+        />
+      )}
+      {user.role === "sewing_supervisor" && (
+        <Placeholder
+          title="Sewing Queue"
+          body="Verified batches and assembly handoff arrive in Phase 5."
+        />
+      )}
     </AppShell>
   );
 }
