@@ -5,6 +5,8 @@ import type {
   VerificationDecision,
 } from "./status";
 
+// Errors & auth
+
 export interface ApiErrorBody {
   error: string;
   code?: string;
@@ -32,20 +34,32 @@ export interface SwitchRoleRequest {
   role: UserRole;
 }
 
-export interface VerificationItemDto {
+// Recipes
+
+export interface RecipeComponentDto {
   id: number;
-  componentId: number;
+  recipeId: number;
   componentName: string;
-  expectedQty: number;
-  actualQty: number | null;
-  status: ComponentStatus | null;
+  piecesPerGarment: number;
+  imageUrl: string | null;
 }
+
+export interface RecipeDto {
+  id: number;
+  recipeCode: string;
+  name: string;
+  category: string;
+  stdFabricYards: number;
+  wastageCap: number;
+  components: RecipeComponentDto[];
+}
+
+// Orders
 
 export interface CuttingOrderDto {
   id: number;
   orderNo: string;
   recipeId: number;
-  recipeName: string;
   targetQty: number;
   fabricRollId: string;
   actualFabricYds: number;
@@ -53,6 +67,32 @@ export interface CuttingOrderDto {
   createdBy: number;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Order payload returned by list/detail endpoints — the recipe is joined
+ * so the client can display garment name and std fabric without a second call.
+ */
+export interface OrderWithRecipeDto extends CuttingOrderDto {
+  recipe: RecipeDto;
+}
+
+export interface CreateOrderRequest {
+  recipeId: number;
+  targetQty: number;
+  fabricRollId: string;
+  actualFabricYds: number;
+}
+
+// Verification
+
+export interface VerificationItemDto {
+  id: number;
+  componentId: number;
+  componentName: string;
+  expectedQty: number;
+  actualQty: number | null;
+  status: ComponentStatus | null;
 }
 
 export interface VerificationLogDto {
