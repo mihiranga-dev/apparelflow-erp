@@ -68,12 +68,17 @@ router.get(
     }
 
     // sewing_supervisor
-    const rows = await db.query.cuttingOrders.findMany({
-      where: eq(cuttingOrders.status, "VERIFIED"),
-      with: { recipe: true },
-      orderBy: [desc(cuttingOrders.createdAt)],
-    });
-    res.json({ orders: rows });
+    if (user.role === "sewing_supervisor") {
+      const rows = await db.query.cuttingOrders.findMany({
+        where: eq(cuttingOrders.status, "VERIFIED"),
+        with: { recipe: true },
+        orderBy: [desc(cuttingOrders.createdAt)],
+      });
+      res.json({ orders: rows });
+      return;
+    }
+
+    res.status(403).json({ error: "Role not allowed to list orders" });
   }),
 );
 
