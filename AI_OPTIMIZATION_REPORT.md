@@ -19,10 +19,16 @@ This document outlines the AI-assisted development workflow used during this 4-d
 
 - **Tailwind v3/v4 tooling missmatch:** Deepseek provided outdated setup instructions to install Tailwind CSS v3. However, when initializing Shadcn UI, it automaticaly generated modern v4 CSS variables. This causing the application to crash with a compile time error stating that the color 'border-border' did not exist.
 - **Drizzle Schema Error:** AI-generated schema used numeric(..., { mode: "number" }). But that does not exist in the drizzle-orm version that i used for this project.
+- **JWT sub type violation:** In code JWT playload declared sub:number and that violates jsonwebtoken's JwtPlayload.sub : string | undefined.
 
 ### 3. Human Refactoring
 
 - **Manual Tailwind v4 Upgrade:** Instead of asking the AI to fix the broken CSS, I manually remove the outdated v3 configuration and upgraded the entire project to Tailwind v4 stack.
 - **Manually change to doublePrecision:** After verifying that upgrading drizzle is not the fix, replaced numeric with doublePrecision for all measurement columns.
+- Correctly typed sub: string, added an explicit String(user.id) coercion at sign-time, and a parseSubject() helper at verify-time that validates the string is a positive integer before any DB lookup.
 
 ### 4. Defensive Architecture
+
+- **Timing Attack Prevention:** During the login authentication flow, implemented a dummy `bcrypt` hash comparison. This ensures the Express server always executes a compute-heavy bcrypt check even if the requested email does not exist in the database. This equalizes response times across all code paths, preventing attackers from enumerating valid user emails via timing analysis.
+- **CPU Exhaustion Prevention (DoS Guard):** AI-generated auth flows often blindly hash any input. Because bcrypt processing time scales with input length, implemented strict Zod schema validation (`max(72)`) on the password payload. This protects the Node.js event loop from locking up if a malicious user submits a 100,000-character string.
+- **Server Enforced RBAC & Hard Stops:** Frontend UI validation (like disabling buttons) was treated purely as user experience. I engineered strict server-side middleware that independently verifies the JWT signature and the assigned database role. I validated these boundaries independently of the React client using raw `curl` scripts, proving that injecting a "bogus" token or attempting to bypass the UI results in an un-bypassable `401 Unauthorized` or `422 Unprocessable Entity` response at the network level.

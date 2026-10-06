@@ -18,7 +18,10 @@
     "test": "npm run test -w @apparelflow/server",
     "db:migrate": "npm run db:migrate -w @apparelflow/server",
     "db:seed": "npm run db:seed -w @apparelflow/server",
-    "db:studio": "npm run db:studio -w @apparelflow/server"
+    "db:studio": "npm run db:studio -w @apparelflow/server",
+    "typecheck:client": "npm run typecheck -w @apparelflow/client",
+    "typecheck:server": "npm run typecheck -w @apparelflow/server",
+    "typecheck": "npm run typecheck -w @apparelflow/server && npm run typecheck -w @apparelflow/client"
   },
   "engines": {
     "node": ">=20.0.0"

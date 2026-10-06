@@ -1,23 +1,53 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useAuth } from "@/lib/auth-context";
+import { LoginPage } from "@/pages/LoginPage";
+import { AppShell } from "@/components/AppShell";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ROLE_LABELS } from "@apparelflow/shared";
 
 function App() {
-  return (
-    <main className="min-h-screen bg-background text-foreground flex items-center justify-center p-8">
-      <div className="w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-semibold">ApparelFlow ERP</h1>
-        <p className="text-sm text-muted-foreground">Scaffold smoke test.</p>
-        <div className="space-y-2">
-          <Label htmlFor="smoke">Contrast check</Label>
-          <Input
-            id="smoke"
-            placeholder="Type here — text must be dark on light"
-          />
-        </div>
-        <Button className="w-full">Verify toolchain</Button>
+  const { user, status } = useAuth();
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading session…</p>
       </div>
-    </main>
+    );
+  }
+
+  if (status === "anonymous" || !user) {
+    return <LoginPage />;
+  }
+
+  return (
+    <AppShell>
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>Phase 2 — Authentication verified</CardTitle>
+          <CardDescription>
+            The role switcher in the header issues a fresh JWT for the chosen
+            persona.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <p>
+            <strong>Role:</strong> {ROLE_LABELS[user.role]} ({user.role})
+          </p>
+          <p>
+            <strong>User ID:</strong> {user.id}
+          </p>
+          <p className="text-muted-foreground">
+            Role-specific dashboards arrive in Phases 3, 4, and 5.
+          </p>
+        </CardContent>
+      </Card>
+    </AppShell>
   );
 }
 
