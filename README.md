@@ -46,9 +46,9 @@ cutting batches from reaching the sewing floor.
 ```
 Role	                      Email	                 Password
 
-Cutting Supervisor	supervisor@apparelflow.dev	 Password123!
-Cutting Verifier	  verifier@apparelflow.dev	 Password123!
-Sewing Supervisor	  sewing@apparelflow.dev	 Password123!
+Cutting Supervisor	supervisor@apparelflow.com	 Password123
+Cutting Verifier	  verifier@apparelflow.com	 Password123
+Sewing Supervisor	  sewing@apparelflow.com	 Password123
 ```
 
 ## Documentation
