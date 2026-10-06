@@ -8,6 +8,8 @@ import { env } from "./config/env";
 import authRouter from "./routes/auth";
 import recipesRouter from "./routes/recipes";
 import ordersRouter from "./routes/orders";
+import verificationItemsRouter from "./routes/verification-items";
+import verificationRouter from "./routes/verification";
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.get("/health", (_req, res) => {
 app.use("/auth", authRouter);
 app.use("/api/recipes", recipesRouter);
 app.use("/api/orders", ordersRouter);
+app.use("/api/verification-items", verificationItemsRouter);
+app.use("/api/verification", verificationRouter);
 
 // 404 fallback for unknown routes.
 app.use((_req, res) => {
