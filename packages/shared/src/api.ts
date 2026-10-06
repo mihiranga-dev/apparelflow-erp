@@ -95,6 +95,17 @@ export interface VerificationItemDto {
   status: ComponentStatus | null;
 }
 
+/**
+ * Full detail payload used by the verification terminal and sewing review —
+ * joins the recipe (with components), the per-component items, and the
+ * immutable audit-log history.
+ */
+export interface OrderVerificationDetailDto extends CuttingOrderDto {
+  recipe: RecipeDto;
+  verificationItems: VerificationItemDto[];
+  verificationLogs: VerificationLogDto[];
+}
+
 export interface VerificationLogDto {
   id: number;
   orderId: number;
@@ -104,4 +115,27 @@ export interface VerificationLogDto {
   rejectionNote: string | null;
   wastagePct: number;
   createdAt: string;
+}
+
+export interface UpdateVerificationItemRequest {
+  actualQty: number;
+}
+
+export interface RejectOrderRequest {
+  rejectionNote: string;
+}
+
+// Approval error codes (used by client to render targeted messages)
+
+export type ApprovalBlockReason =
+  | "MISSING_ITEMS"
+  | "UNCOUNTED_ITEMS"
+  | "SHORTAGE";
+
+export interface ApprovalBlockedResponse {
+  error: string;
+  code: ApprovalBlockReason;
+  details?: {
+    componentNames?: string[];
+  };
 }
