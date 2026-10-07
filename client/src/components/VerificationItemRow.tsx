@@ -73,20 +73,20 @@ export function VerificationItemRow({
           : "RED";
 
   return (
-    <div className="grid grid-cols-12 items-center gap-3 py-3 border-b last:border-b-0">
-      <div className="col-span-5">
+    <div className="grid grid-cols-1 sm:grid-cols-12 items-start sm:items-center gap-2 sm:gap-3 py-3 border-b last:border-b-0">
+      <div className="col-span-1 sm:col-span-5">
         <p className="text-sm font-medium text-foreground">{componentName}</p>
         <p className="text-xs text-muted-foreground">
           {piecesPerGarment} pcs / garment
         </p>
       </div>
 
-      <div className="col-span-2 text-right">
+      <div className="col-span-1 sm:col-span-2 sm:text-right">
         <p className="font-mono text-sm">{item.expectedQty}</p>
         <p className="text-xs text-muted-foreground">expected</p>
       </div>
 
-      <div className="col-span-3">
+      <div className="col-span-1 sm:col-span-3">
         <Input
           value={draft}
           onChange={(e) => handleChange(e.target.value)}
@@ -107,7 +107,7 @@ export function VerificationItemRow({
         )}
       </div>
 
-      <div className="col-span-2 flex justify-end">
+      <div className="col-span-1 sm:col-span-2 flex sm:justify-end">
         <TrafficLight status={previewStatus} />
       </div>
     </div>

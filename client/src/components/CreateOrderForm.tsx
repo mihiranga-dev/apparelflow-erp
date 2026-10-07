@@ -266,7 +266,7 @@ export function CreateOrderForm({
 
       {/* Live multiplier preview */}
       {componentPreview.length > 0 && (
-        <div className="rounded-md border bg-muted/40 p-4">
+        <div className="rounded-md border border-border bg-secondary p-4">
           <p className="text-sm font-medium mb-2">Expected Component Counts</p>
           <ul className="space-y-1 text-sm">
             {componentPreview.map((c) => (
@@ -285,7 +285,7 @@ export function CreateOrderForm({
           className={`rounded-md border p-4 text-sm ${
             wastagePreview.exceedsCap
               ? "border-destructive/50 bg-destructive/10 text-destructive"
-              : "bg-muted/40"
+              : "border-border bg-secondary"
           }`}
         >
           <div className="flex justify-between">

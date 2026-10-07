@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
 import { VerificationTerminal } from "@/components/VerificationTerminal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function VerifierDashboard() {
   const [orders, setOrders] = useState<OrderWithRecipeDto[]>([]);
@@ -82,7 +83,11 @@ export function VerifierDashboard() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            <div className="space-y-3">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
           ) : orders.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No batches pending verification. New cutting orders will appear

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/table";
 import { CreateOrderForm } from "@/components/CreateOrderForm";
 import { OrderStatusBadge } from "@/components/OrderStatusBadge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function SupervisorDashboard() {
   const [recipes, setRecipes] = useState<RecipeDto[]>([]);
@@ -132,7 +133,11 @@ export function SupervisorDashboard() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            <div className="space-y-3">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
           ) : orders.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No orders yet. Click “New Cutting Order” to submit your first

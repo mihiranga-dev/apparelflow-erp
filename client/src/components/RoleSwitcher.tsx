@@ -31,7 +31,10 @@ export function RoleSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">Viewing as</span>
+      <span className="hidden text-sm text-muted-foreground sm:inline">
+        Viewing as
+      </span>
+
       <Select
         value={user.role}
         onValueChange={(v) => handleChange(v as UserRole)}
