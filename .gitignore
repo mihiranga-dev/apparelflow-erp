@@ -49,3 +49,5 @@ coverage/
 .render/
 
 scripts/.tokens.env
+
+server/.env.test

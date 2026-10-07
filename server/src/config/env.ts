@@ -1,5 +1,10 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import { z } from "zod";
+
+// Prefer .env.test during test runs so a test DB URL can be isolated from dev.
+dotenv.config({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
 
 /**
  * Fail-fast env validation. If any required variable is missing or malformed,
