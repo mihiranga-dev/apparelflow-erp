@@ -13,11 +13,17 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/*
+        Explicit max-width + responsive horizontal padding replaces the
+        `container` utility, which — after the Tailwind v4 migration — no longer
+        carries the 2rem mobile padding we declared in the v3 config. Without
+        this, content butts against the viewport edges on phones.
+      */}
       <header className="border-b bg-card">
-        <div className="container mx-auto flex min-h-16 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="mx-auto w-full max-w-7xl flex min-h-16 flex-col gap-2 px-4 py-3 sm:px-6 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+          <div className="min-w-0">
             <h1 className="text-lg font-semibold">ApparelFlow ERP</h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground truncate">
               {user.fullName} · {user.email}
             </p>
           </div>
@@ -29,8 +35,9 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </div>
       </header>
-
-      <main className="container mx-auto py-8">{children}</main>
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        {children}
+      </main>
     </div>
   );
 }

@@ -90,7 +90,7 @@ export function SupervisorDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Production Recipes</CardTitle>
+          <CardTitle className="text-xl">Production Recipes</CardTitle>
           <CardDescription>
             Pre-seeded Bill of Materials. Selecting one multiplies its
             components by your target quantity.
@@ -99,24 +99,29 @@ export function SupervisorDashboard() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
             {recipes.map((r) => (
-              <div key={r.id} className="rounded-md border p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{r.name}</span>
-                  <span className="text-xs text-muted-foreground font-mono">
+              <div
+                key={r.id}
+                className="rounded-lg border bg-card p-5 space-y-3"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-lg font-semibold">{r.name}</span>
+                  <span className="text-sm font-mono text-muted-foreground">
                     {r.recipeCode}
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {r.category} · {r.stdFabricYards} yds/pc · wastage cap{" "}
                   {r.wastageCap}%
                 </p>
-                <ul className="text-xs space-y-0.5">
+                <ul className="space-y-1.5 border-t pt-3 text-sm">
                   {r.components.map((c) => (
                     <li key={c.id} className="flex justify-between">
                       <span className="text-muted-foreground">
                         {c.componentName}
                       </span>
-                      <span className="font-mono">{c.piecesPerGarment}×</span>
+                      <span className="font-mono font-medium">
+                        {c.piecesPerGarment}×
+                      </span>
                     </li>
                   ))}
                 </ul>
