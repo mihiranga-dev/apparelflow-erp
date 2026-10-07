@@ -12,6 +12,20 @@ import { users } from "../db/schema";
 import { signToken } from "../lib/jwt";
 import { asyncHandler } from "../lib/async-handler";
 import { requireAuth } from "../middleware/auth";
+import rateLimit from "express-rate-limit";
+
+// Login rate limit. 20 attempts per 15 minutes per IP.
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  // Only count failures. Successful logins don't consume the budget, so a
+  // heavy-handed session doesn't lock out a legitimate user mid-audit.
+  skipSuccessfulRequests: true,
+  message: { error: "Too many login attempts. Try again in a few minutes." },
+});
 
 const router = Router();
 
@@ -37,6 +51,7 @@ const loginSchema = z.object({
 
 router.post(
   "/login",
+  loginLimiter,
   asyncHandler(async (req, res) => {
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {

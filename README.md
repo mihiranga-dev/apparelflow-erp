@@ -55,3 +55,4 @@ Sewing Supervisor	  sewing@apparelflow.com	 Password123
 
 - [`AI_OPTIMIZATION_REPORT.md`](./AI_OPTIMIZATION_REPORT.md) — AI usage audit
 - [`docs/`](./docs) — architecture diagrams and schema documentation
+- [`docs/SECURITY.md`](./docs/SECURITY.md) — RBAC matrix and tamper resistance
