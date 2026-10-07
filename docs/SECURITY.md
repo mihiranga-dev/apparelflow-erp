@@ -1,7 +1,6 @@
 # Security & RBAC Model
 
-ApparelFlow enforces its production gates **server-side**. Every UI state below is
-mirrored by a server guard; hiding a button is never the security boundary.
+ApparelFlow enforces its production gates **server-side**. Every UI state below is mirrored by a server guard; hiding a button is never the security boundary.
 
 ## Roles
 
