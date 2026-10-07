@@ -1,17 +1,43 @@
 [build]
-  # Monorepo-aware build. Netlify checks out the whole repo, so we run install
-  # and shared-package build from the root, then build the client workspace.
-  # Without `build:shared` the client compiles against a missing dist/ and fails.
-  base = "."
+  # Runs once per deploy. Installs all workspaces, builds the shared package
+  # so its dist/ is available to both the client and the function bundler,
+  # then builds the client. Netlify separately bundles netlify/functions/.
   command = "npm install && npm run build:shared && npm run build:client"
   publish = "client/dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  # Fail the build if any workspace install produces a peer-dep warning cascade.
   NPM_FLAGS = "--no-audit --no-fund"
 
-# SPA fallback — deep links like /dashboard must serve index.html, not 404.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # Netlify's free tier caps synchronous functions at 10s. Our longest
+  # endpoint (approve with a transaction) completes in <500ms.
+  included_files = ["packages/shared/dist/**"]
+
+# ─── API proxy to the Express function ──────────────────────────────────────
+# Path prefixes are preserved so the function sees the same routes Express
+# was written against (/auth/login, /api/orders, etc.) — no route rewrites
+# needed anywhere in the server code.
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/api/health"
+  status = 200
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/.netlify/functions/api/auth/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/api/:splat"
+  status = 200
+
+# ─── SPA fallback (must be last) ────────────────────────────────────────────
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

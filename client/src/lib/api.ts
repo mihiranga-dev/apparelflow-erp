@@ -1,4 +1,8 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+// Same-origin in production (Netlify serves both SPA and function), explicit
+// localhost in dev.
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.DEV ? "http://localhost:4000" : "");
 
 const TOKEN_STORAGE_KEY = "apparelflow.token";
 
