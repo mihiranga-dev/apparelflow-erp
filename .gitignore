@@ -47,3 +47,5 @@ coverage/
 #  Render / Netlify local overrides 
 .netlify/
 .render/
+
+scripts/.tokens.env
