@@ -1,9 +1,11 @@
 [build]
-  # Runs once per deploy. Installs all workspaces, builds the shared package
-  # so its dist/ is available to both the client and the function bundler,
-  # then builds the client. Netlify separately bundles netlify/functions/.
-  command = "npm install && npm run build:shared && npm run build:client"
+  # `--include=dev` is mandatory: Netlify sets NODE_ENV=production during
+  # builds, which makes npm skip devDependencies by default — but tsup
+  # (packages/shared) and vite/tsc (client) are all dev-only tooling.
+  # Without this flag, the build fails with `sh: 1: tsup: not found`.
+  command = "npm install --include=dev && npm run build:shared && npm run build:client"
   publish = "client/dist"
+
 
 [build.environment]
   NODE_VERSION = "20"
