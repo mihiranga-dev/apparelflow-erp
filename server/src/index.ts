@@ -10,6 +10,7 @@ import recipesRouter from "./routes/recipes";
 import ordersRouter from "./routes/orders";
 import verificationItemsRouter from "./routes/verification-items";
 import verificationRouter from "./routes/verification";
+import sewingRouter from "./routes/sewing";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/recipes", recipesRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/verification-items", verificationItemsRouter);
 app.use("/api/verification", verificationRouter);
+app.use("/api/sewing", sewingRouter);
 
 // 404 fallback for unknown routes.
 app.use((_req, res) => {

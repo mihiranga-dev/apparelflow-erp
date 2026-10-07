@@ -1,0 +1,3 @@
+ALTER TABLE "cutting_orders" ADD COLUMN "sewing_started_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "cutting_orders" ADD COLUMN "sewing_started_by" integer;--> statement-breakpoint
+ALTER TABLE "cutting_orders" ADD CONSTRAINT "cutting_orders_sewing_started_by_users_id_fk" FOREIGN KEY ("sewing_started_by") REFERENCES "public"."users"("id") ON DELETE restrict ON UPDATE no action;

@@ -5,6 +5,8 @@ import type {
   OrderVerificationDetailDto,
   OrderWithRecipeDto,
   RecipeDto,
+  SewingBatchDetailDto,
+  SewingQueueItemDto,
 } from "@apparelflow/shared";
 import { apiFetch } from "./api";
 
@@ -67,4 +69,22 @@ export function rejectOrder(
     method: "POST",
     body: JSON.stringify({ rejectionNote }),
   });
+}
+
+// ─── Sewing queue ─────────────────────────────────────────────────────────────
+
+export function getSewingQueue(): Promise<{ orders: SewingQueueItemDto[] }> {
+  return apiFetch("/api/sewing/queue");
+}
+
+export function getSewingBatch(
+  orderId: number,
+): Promise<{ order: SewingBatchDetailDto }> {
+  return apiFetch(`/api/sewing/queue/${orderId}`);
+}
+
+export function startSewing(
+  orderId: number,
+): Promise<{ order: CuttingOrderDto }> {
+  return apiFetch(`/api/sewing/queue/${orderId}/start`, { method: "POST" });
 }

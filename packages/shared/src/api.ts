@@ -65,6 +65,8 @@ export interface CuttingOrderDto {
   actualFabricYds: number;
   status: OrderStatus;
   createdBy: number;
+  sewingStartedAt: string | null;
+  sewingStartedBy: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -138,4 +140,26 @@ export interface ApprovalBlockedResponse {
   details?: {
     componentNames?: string[];
   };
+}
+
+// Sewing queue
+
+/**
+ * Sewing queue list item — order + recipe + the latest verifier decision,
+ * flattened so the list view can render attribution without a second call.
+ */
+export interface SewingQueueItemDto extends CuttingOrderDto {
+  recipe: RecipeDto;
+  verifierName: string | null;
+  verifiedAt: string | null;
+  wastagePct: number | null;
+}
+
+/**
+ * Sewing batch detail — full verification items + complete audit-log history.
+ */
+export interface SewingBatchDetailDto extends CuttingOrderDto {
+  recipe: RecipeDto;
+  verificationItems: Array<VerificationItemDto & { componentName: string }>;
+  verificationLogs: VerificationLogDto[];
 }

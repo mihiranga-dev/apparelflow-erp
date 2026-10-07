@@ -133,6 +133,13 @@ export const cuttingOrders = pgTable(
     createdBy: integer("created_by")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
+    // Null until the Sewing Supervisor starts the assembly line for this batch.
+    // Persisted as a distinct action rather than a status, so the state machine
+    // stays at four states and Phase 4's guards don't need to be revisited.
+    sewingStartedAt: timestamp("sewing_started_at", { withTimezone: true }),
+    sewingStartedBy: integer("sewing_started_by").references(() => users.id, {
+      onDelete: "restrict",
+    }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
