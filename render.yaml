@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: apparelflow-server
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    rootDir: .
+    buildCommand: npm install && npm run build:shared
+    startCommand: npm run start -w @apparelflow/server
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      # Everything below is set in the Render dashboard, NOT committed here.
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: PORT
+        value: 4000

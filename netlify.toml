@@ -1,0 +1,18 @@
+[build]
+  # Monorepo-aware build. Netlify checks out the whole repo, so we run install
+  # and shared-package build from the root, then build the client workspace.
+  # Without `build:shared` the client compiles against a missing dist/ and fails.
+  base = "."
+  command = "npm install && npm run build:shared && npm run build:client"
+  publish = "client/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Fail the build if any workspace install produces a peer-dep warning cascade.
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# SPA fallback — deep links like /dashboard must serve index.html, not 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
