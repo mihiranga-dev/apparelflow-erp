@@ -9,6 +9,8 @@ interface VerificationItemRowProps {
   piecesPerGarment: number;
   disabled: boolean;
   onSave: (itemId: number, actualQty: number) => Promise<void>;
+  /** Notifies the parent whenever this row's unsaved state changes. */
+  onDirtyChange: (itemId: number, isDirty: boolean) => void;
 }
 
 export function VerificationItemRow({
@@ -17,25 +19,25 @@ export function VerificationItemRow({
   piecesPerGarment,
   disabled,
   onSave,
+  onDirtyChange,
 }: VerificationItemRowProps) {
-  // Local buffer so typing does not fire a request per keystroke.
-  const [draft, setDraft] = useState<string>(
-    item.actualQty === null ? "" : String(item.actualQty),
-  );
+  const savedString = item.actualQty === null ? "" : String(item.actualQty);
+  const [draft, setDraft] = useState<string>(savedString);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isDirty =
-    draft !== (item.actualQty === null ? "" : String(item.actualQty));
+  const isDirty = draft !== savedString;
 
   function handleChange(v: string) {
     setError(null);
-    // Only digits allowed. Rejects "-", ".", "e", letters, empty-with-spaces.
+    // Only digits. Rejects "-", ".", "e", letters, leading spaces.
     if (v !== "" && !/^\d+$/.test(v)) {
       setError("Whole numbers only");
       return;
     }
     setDraft(v);
+    // Report dirtiness based on the NEW value vs the server-saved value.
+    onDirtyChange(item.id, v !== savedString);
   }
 
   async function commit() {
@@ -54,18 +56,26 @@ export function VerificationItemRow({
     setSaving(true);
     try {
       await onSave(item.id, n);
+      // Save succeeded — parent's optimistic update refreshed item prop and
+      // this row is no longer dirty.
+      onDirtyChange(item.id, false);
+      setError(null);
     } catch {
       setError("Save failed");
+      // Row remains dirty; approve stays blocked until the save succeeds.
     } finally {
       setSaving(false);
     }
   }
 
-  // Live preview of the traffic light for the draft value, so the verifier
-  // sees the color change before committing. Server still owns truth.
+  /**
+   * Traffic-light preview. Reflects the DRAFT value — never the stale saved
+   * status — so an emptied input commits to Uncounted immediately, and an
+   * out-of-sync count shows the user what they're actually about to submit.
+   */
   const previewStatus: ComponentStatus | null =
     draft === ""
-      ? item.status
+      ? null // ← Uncounted (fixes Bug A)
       : Number(draft) === item.expectedQty
         ? "GREEN"
         : Number(draft) > item.expectedQty
@@ -97,12 +107,12 @@ export function VerificationItemRow({
           placeholder={disabled ? "—" : "count"}
           inputMode="numeric"
           disabled={disabled || saving}
-          aria-invalid={Boolean(error)}
+          aria-invalid={Boolean(error) || (isDirty && draft === "")}
         />
         {error && <p className="text-xs text-destructive mt-1">{error}</p>}
         {isDirty && !error && (
-          <p className="text-xs text-muted-foreground mt-1">
-            Press Enter or click away to save
+          <p className="text-xs text-amber-700 mt-1">
+            Unsaved — press Enter or click away
           </p>
         )}
       </div>

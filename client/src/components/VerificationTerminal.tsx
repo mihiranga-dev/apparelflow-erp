@@ -48,11 +48,19 @@ export function VerificationTerminal({
   const [rejectNote, setRejectNote] = useState("");
   const [rejectError, setRejectError] = useState<string | null>(null);
 
+  /**
+   * Ids of rows with unsaved edits. Approval is blocked while this is non-empty,
+   * because the server's view of those components is stale — we cannot safely
+   * judge the batch until every count is committed.
+   */
+  const [dirtyItemIds, setDirtyItemIds] = useState<Set<number>>(new Set());
+
   const load = useCallback(() => {
     setLoading(true);
     return getVerificationOrder(orderId)
       .then((res) => {
         setOrder(res.order);
+        setDirtyItemIds(new Set());
         setLoadError(null);
       })
       .catch((err: unknown) => {
@@ -82,27 +90,49 @@ export function VerificationTerminal({
     );
   }, [order]);
 
-  // Whether approval is locally permissible. This is a UX affordance only —
-  // the server independently re-derives this. The button is DISABLED (not
-  // hidden) here because the verifier needs feedback about what is blocking.
+  const handleDirtyChange = useCallback((itemId: number, isDirty: boolean) => {
+    setDirtyItemIds((prev) => {
+      const next = new Set(prev);
+      if (isDirty) next.add(itemId);
+      else next.delete(itemId);
+      return next;
+    });
+  }, []);
+
+  /**
+   * Approval gate. Mirrors the server's hard stop PLUS blocks on the two
+   * client-only conditions the server cannot see:
+   *   - unsaved edits (dirty rows)
+   *   - locally cleared counts that have not been committed back to null
+   *
+   * The server independently re-derives the shortage and uncounted checks,
+   * so a bypassed client cannot approve a bad batch — this gate exists purely
+   * so the UI never *offers* an action that will be rejected.
+   */
   const approveDisabledReason = useMemo(() => {
     if (!order) return "Order not loaded";
     if (order.status !== "PENDING_VERIFICATION")
       return "Order is no longer pending";
+
+    if (dirtyItemIds.size > 0) {
+      return `${dirtyItemIds.size} unsaved count${dirtyItemIds.size > 1 ? "s" : ""}`;
+    }
+
     const uncounted = order.verificationItems.filter(
       (i) => i.actualQty === null,
     );
     if (uncounted.length > 0)
       return `${uncounted.length} component(s) uncounted`;
+
     const shortages = order.verificationItems.filter((i) => i.status === "RED");
     if (shortages.length > 0) return `${shortages.length} component(s) short`;
+
     return null;
-  }, [order]);
+  }, [order, dirtyItemIds]);
 
   // ─── Actions ────────────────────────────────────────────────────────────────
 
   async function handleSaveCount(itemId: number, actualQty: number) {
-    // Optimistic update for instant feedback, refreshed by server response.
     const res = await updateVerificationItem(itemId, actualQty);
     setOrder((prev) => {
       if (!prev) return prev;
@@ -123,6 +153,12 @@ export function VerificationTerminal({
 
   async function handleApprove() {
     if (!order) return;
+    if (approveDisabledReason) {
+      // Belt and braces — the button is disabled, but a keyboard-triggered
+      // submit or programmatic call should still be refused client-side.
+      setActionError(`Cannot approve: ${approveDisabledReason}`);
+      return;
+    }
     setActionError(null);
     setSubmitting(true);
     try {
@@ -133,8 +169,6 @@ export function VerificationTerminal({
         const body = err.details as ApprovalBlockedResponse | undefined;
         const names = body?.details?.componentNames?.join(", ");
         setActionError(names ? `${err.message} — ${names}` : err.message);
-        // Refetch to sync local state with authoritative server truth — the
-        // server may have rejected based on stale client counts.
         void load();
       } else {
         setActionError("Unexpected error. Try again.");
@@ -266,6 +300,7 @@ export function VerificationTerminal({
               piecesPerGarment={piecesPerGarmentById.get(item.componentId) ?? 1}
               disabled={order.status !== "PENDING_VERIFICATION"}
               onSave={handleSaveCount}
+              onDirtyChange={handleDirtyChange}
             />
           ))}
         </CardContent>
